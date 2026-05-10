@@ -492,6 +492,42 @@
     }
   });
 
+  function drawTextOverlay(canvas, text, { fontSize, textColor, badgeColor }) {
+    const ctx = canvas.getContext('2d');
+    ctx.font = `bold ${fontSize}px -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif`;
+
+    const metrics = ctx.measureText(text);
+    const textW   = metrics.width;
+    const textH   = fontSize;
+    const padding = Math.round(fontSize * 0.35);
+    const radius  = Math.round(fontSize * 0.3);
+
+    const rectX = (canvas.width  - textW) / 2 - padding;
+    const rectY = (canvas.height - textH) / 2 - padding;
+    const rectW = textW  + padding * 2;
+    const rectH = textH  + padding * 2;
+
+    // Rounded badge
+    ctx.beginPath();
+    ctx.moveTo(rectX + radius, rectY);
+    ctx.lineTo(rectX + rectW - radius, rectY);
+    ctx.quadraticCurveTo(rectX + rectW, rectY, rectX + rectW, rectY + radius);
+    ctx.lineTo(rectX + rectW, rectY + rectH - radius);
+    ctx.quadraticCurveTo(rectX + rectW, rectY + rectH, rectX + rectW - radius, rectY + rectH);
+    ctx.lineTo(rectX + radius, rectY + rectH);
+    ctx.quadraticCurveTo(rectX, rectY + rectH, rectX, rectY + rectH - radius);
+    ctx.lineTo(rectX, rectY + radius);
+    ctx.quadraticCurveTo(rectX, rectY, rectX + radius, rectY);
+    ctx.closePath();
+    ctx.fillStyle = badgeColor;
+    ctx.fill();
+
+    // Centered text
+    ctx.fillStyle   = textColor;
+    ctx.textBaseline = 'middle';
+    ctx.fillText(text, (canvas.width - textW) / 2, rectY + rectH / 2);
+  }
+
   downloadBtn.addEventListener('click', () => {
     const link = document.createElement('a');
     link.download = 'qrcode.png';
