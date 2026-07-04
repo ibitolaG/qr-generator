@@ -320,7 +320,7 @@
     <div class="select-wrapper">
       <select id="moduleShape">
         <option value="square">Square</option>
-        <option value="rounded">Rounded squares</option>
+        <option value="rounded">Rounded edge + squares</option>
       </select>
     </div>
   </div>
@@ -471,7 +471,11 @@
       // Background
       if (!isTransparent) {
         ctx.fillStyle = back;
-        ctx.fillRect(0, 0, total, total);
+        if (moduleShape === 'rounded') {
+          drawRoundedRect(ctx, 0, 0, total, total, Math.round(total * 0.12));
+        } else {
+          ctx.fillRect(0, 0, total, total);
+        }
       }
 
       // QR modules
