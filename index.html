@@ -315,6 +315,16 @@
     </div>
   </div>
 
+  <div class="field">
+    <label>QR Shape</label>
+    <div class="select-wrapper">
+      <select id="moduleShape">
+        <option value="square">Square</option>
+        <option value="rounded">Rounded squares</option>
+      </select>
+    </div>
+  </div>
+
   <hr class="divider" />
   <div class="section-title">Text Overlay <span class="optional-badge">optional</span></div>
 
@@ -398,6 +408,7 @@
   const badgeColorSel = document.getElementById('badgeColor');
   const fontSizeSlider = document.getElementById('fontSize');
   const fontSizeVal    = document.getElementById('fontSizeVal');
+  const moduleShapeSel = document.getElementById('moduleShape');
 
   fontSizeSlider.addEventListener('input', () => {
     fontSizeVal.textContent = fontSizeSlider.value + 'px';
@@ -438,6 +449,7 @@
     const fill = fillSelect.value;
     const back = backSelect.value;
     const isTransparent = back === 'transparent';
+    const moduleShape = moduleShapeSel.value;
 
     try {
       // qrcode-generator API
@@ -467,11 +479,13 @@
       for (let row = 0; row < moduleCount; row++) {
         for (let col = 0; col < moduleCount; col++) {
           if (qr.isDark(row, col)) {
-            ctx.fillRect(
-              (col + MARGIN) * cellSize,
-              (row + MARGIN) * cellSize,
-              cellSize, cellSize
-            );
+            const x = (col + MARGIN) * cellSize;
+            const y = (row + MARGIN) * cellSize;
+            if (moduleShape === 'rounded') {
+              drawRoundedRect(ctx, x, y, cellSize, cellSize, Math.max(1, cellSize * 0.38));
+            } else {
+              ctx.fillRect(x, y, cellSize, cellSize);
+            }
           }
         }
       }
@@ -491,6 +505,22 @@
       alert('Could not generate QR code: ' + err.message);
     }
   });
+
+  function drawRoundedRect(ctx, x, y, width, height, radius) {
+    radius = Math.min(radius, width / 2, height / 2);
+    ctx.beginPath();
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
+    ctx.closePath();
+    ctx.fill();
+  }
 
   function drawTextOverlay(canvas, text, { fontSize, textColor, badgeColor }) {
     const ctx = canvas.getContext('2d');
