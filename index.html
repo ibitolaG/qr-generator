@@ -180,6 +180,13 @@
 
     canvas { display: block; }
 
+    .hint {
+      color: #6366f1;
+      font-size: 0.8rem;
+      margin-top: 6px;
+      display: none;
+    }
+
     .error {
       color: #ef4444;
       font-size: 0.85rem;
@@ -323,6 +330,7 @@
         <option value="rounded">Rounded edge + squares</option>
       </select>
     </div>
+    <div class="hint" id="shapeHint">Rounded edge needs a background color — switched it to White.</div>
   </div>
 
   <hr class="divider" />
@@ -433,7 +441,22 @@
   }
 
   fillSelect.addEventListener('change', () => updateSwatch(fillSelect, fillSwatch));
-  backSelect.addEventListener('change', () => updateSwatch(backSelect, backSwatch));
+  backSelect.addEventListener('change', () => {
+    updateSwatch(backSelect, backSwatch);
+    shapeHint.style.display = 'none';
+  });
+
+  // A transparent background has no edge to round, so pick White automatically.
+  const shapeHint = document.getElementById('shapeHint');
+  moduleShapeSel.addEventListener('change', () => {
+    if (moduleShapeSel.value === 'rounded' && backSelect.value === 'transparent') {
+      backSelect.value = '#ffffff';
+      updateSwatch(backSelect, backSwatch);
+      shapeHint.style.display = 'block';
+    } else {
+      shapeHint.style.display = 'none';
+    }
+  });
   updateSwatch(fillSelect, fillSwatch);
   updateSwatch(backSelect, backSwatch);
 
