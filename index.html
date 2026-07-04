@@ -485,11 +485,7 @@
           if (qr.isDark(row, col)) {
             const x = (col + MARGIN) * cellSize;
             const y = (row + MARGIN) * cellSize;
-            if (moduleShape === 'rounded') {
-              drawRoundedRect(ctx, x, y, cellSize, cellSize, Math.max(1, cellSize * 0.38));
-            } else {
-              ctx.fillRect(x, y, cellSize, cellSize);
-            }
+            ctx.fillRect(x, y, cellSize, cellSize);
           }
         }
       }
